@@ -2,11 +2,14 @@ using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shooter : MonoBehaviour
 {
     [SerializeField]
     TMP_Text bulletCountText;
+    [SerializeField]
+    Image cover_img;
     public Color color;
     public GameObject projectilePrefab;
     public Transform shootPoint;
@@ -15,10 +18,11 @@ public class Shooter : MonoBehaviour
     private int blockCol;
     public bool isOnWar=false;
     public bool isWaitingtoFire =false;
-   
+    AudioSource _audioSource;
 
     private void Start()
     {
+        _audioSource = GetComponent<AudioSource>();
         
         transform.GetComponent<MeshRenderer>().material.color = color;
         bulletCountText.text = bulletCount.ToString();
@@ -27,7 +31,7 @@ public class Shooter : MonoBehaviour
 
     public void StartFight()
     {
-
+      
         if (isOnWar) return;
         for (int i = 0; i < FightSlotManager.Instance.slots.Count; i++)
         {
@@ -38,6 +42,7 @@ public class Shooter : MonoBehaviour
                     .OnComplete(() =>
                     {
                         // Code to execute after the animation completes
+                        cover_img.color = color;    
                         isOnWar = true;
                         GridManager.Instance.onCubeDestroy.AddListener(FindMyBlock);
                         StartCoroutine(ShootProjectile());
@@ -85,7 +90,7 @@ public class Shooter : MonoBehaviour
                 transform.LookAt(targetPos);
                 bulletCountText.text =bulletCount.ToString();
                 isWaitingtoFire = false;
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.05f);
             }
             else
             {
@@ -130,7 +135,9 @@ public class Shooter : MonoBehaviour
         Block block = target.GetComponent<Block>();
         if (block != null)
         {
-            block.DestroyWithJellyEffect();
+            _audioSource.Play();
+            Vector3 impactDirection = (target.position - projectile.position);
+            block.DestroyWithJellyEffect(impactDirection);
             StartCoroutine(GridManager.Instance.ApplyGravity(blockCol));
         }
 

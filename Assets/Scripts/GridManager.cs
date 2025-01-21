@@ -10,7 +10,7 @@ public class GridManager : MonoBehaviour
     public int rows = 10;
     public int cols = 10;
     private int totalBlock;
-    public float fallSpeed = 2f;
+    public float fallSpeed = 3f;
     [Range(0,5)]
     public int colorPattern; // Controls the pattern logic from the Inspector
     List<Color> colors = new List<Color>();
@@ -50,7 +50,7 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < rows; y++)
             {
-                Vector3 position = new Vector3(x, 0, y); // Use consistent axis setup
+                Vector3 position = new Vector3(x, 0.4f, y); // Use consistent axis setup
                 GameObject block = Instantiate(blockPrefab, position, Quaternion.identity, transform);
                 gridPrefab[x, y] = block;
 
@@ -101,13 +101,16 @@ public class GridManager : MonoBehaviour
             if (gridPrefab[col, y] != null)
             {
                 isLastRow = true;
+                // Update grid
+                gridPrefab[col, y - 1] = gridPrefab[col, y];
+               
+
                 gridPrefab[col, y].transform
                    .DOMoveZ(y-1, fallSpeed)
                    .SetEase(Ease.InOutSine);
-
-                // Update grid
-                gridPrefab[col, y - 1] = gridPrefab[col, y];
                 gridPrefab[col, y] = null;
+
+
             }
            
 

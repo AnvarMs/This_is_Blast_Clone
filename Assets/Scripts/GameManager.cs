@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     GameObject gameFinish;
     [SerializeField]
     GameObject pouseButton;
+   
 
     private void Awake()
     {
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
         winPanel.SetActive(true);
         winParticle.SetActive(true);
         pouseButton.SetActive(false);
+        Instantiate(winParticle,Camera.main.transform.position + new Vector3(0,-4,1),Quaternion.identity );
         Handheld.Vibrate();
     }
     public void GameOver()
